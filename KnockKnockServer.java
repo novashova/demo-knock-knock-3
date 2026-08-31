@@ -3,30 +3,43 @@ import java.io.*;
 
 public class KnockKnockServer {
     public static void main(String[] args) throws IOException {
+        System.out.println("Hello world!");
         
-        int portNumber = 4444;
+        int portNumber = 777;
         System.out.println("Starting Knock-Knock Server on port " + portNumber);
 
-        // TODO 1: Open a ServerSocket on the portNumber
-        
-        // TODO 2: Call accept() to wait for a client to knock on the door
-        
-        // TODO 3: Set up your PrintWriter (with auto-flush) and BufferedReader
-        
-        // TODO 4: Instantiate the KnockKnockProtocol "brain" (e.g., kkp)
+
+        ServerSocket serverSocket = new ServerSocket(portNumber);
+        System.out.println("Server is calling on port: " + portNumber);
+
+        Socket clientSocket = serverSocket.accept();
+        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+        System.out.println("Connected");
+
+        KnockKnockProtocol kkp = new KnockKnockProtocol();
         
         String inputLine, outputLine;
+        
+        outputLine = kkp.processInput(null);
+        out.println(outputLine);
 
-        // TODO 5: Get the very first message from the protocol by passing it 'null'
-        // outputLine = kkp.processInput(null);
-        // Then, send that outputLine to the client using your PrintWriter!
 
-        // TODO 6: Create a while loop that constantly reads from the client (in.readLine())
-        // Inside the loop:
-        //   - Pass the client's input into kkp.processInput()
-        //   - Send the resulting string back to the client
-        //   - If the protocol returns "Bye.", break the loop.
+        while((inputLine = in.readLine()) != null){
+            outputLine = kkp.processInput(inputLine);
+            System.out.println(inputLine);
+            out.println(outputLine);
 
-        // TODO 7: Close your sockets and streams!
+            if(inputLine.equals("Bye.")){
+                out.println("Bye!");
+                break;
+            }
+        }
+
+        serverSocket.close();
+        clientSocket.close();
+        in.close();
+        out.close();
     }
 }

@@ -1,35 +1,40 @@
 import java.io.*;
 import java.net.*;
-//test
 
-
-
-
-//another test
 public class KnockKnockClient {
     public static void main(String[] args) throws IOException {
         
-        String hostName = "127.0.0.1";
-        int portNumber = 4444;
+        String hostName = "10.97.14.83";
+        int portNumber = 777;
 
         System.out.println("Connecting to server...");
 
         // TODO 1: Create a regular Socket connected to the hostName and portNumber
+        Socket socket = new Socket(hostName, portNumber);
         
         // TODO 2: Set up your PrintWriter (with auto-flush) and BufferedReader (network)
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         
         // TODO 3: Set up a SECOND BufferedReader to read from the keyboard (System.in)
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         
         String fromServer;
         String fromUser;
 
-        // TODO 4: Create a while loop to read lines from the server (in.readLine())
-        // Inside the loop:
-        //   - Print what the server says to the console.
-        //   - If the server says "Bye.", break the loop.
-        //   - Otherwise, read a line from the user's keyboard.
-        //   - If the user typed something, send it to the server!
+        while((fromServer = in.readLine()) != null){
+            System.out.println(fromServer);
+            fromUser = stdIn.readLine();
+            if(fromUser != null)
+                out.println(fromUser);
+            if(fromUser.equals("Bye."))
+                break;
+        }
 
-        // TODO 5: Close your sockets and streams!
+        socket.close();
+        in.close();
+        out.close();
+        stdIn.close();
+
     }
 }
